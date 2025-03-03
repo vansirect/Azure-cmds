@@ -1,0 +1,15 @@
+GIT
+git push azure main
+AZURE CLI
+/ first log in
+az login
+/deploy app
+az webapp up --name MyWebApp --resource-group MyResourceGroup
+ZIP DEPLOY
+/package your app
+zip - r myapp.zip.
+/deploy using curl
+curl -X POST -u "username:password" --data-binary @myapp.zip "https://<app-name>.scm.azurewebsites.net/api/zipdeploy"
+
+
+
