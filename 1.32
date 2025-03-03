@@ -1,0 +1,21 @@
+CONTINOUS DEPLOYMENT OF CONTAINERS
+Git commit ID - myapp:abcd1234
+Timestamp - myapp:20240303-1500
+Version number - myapp:v1.2.0
+
+PUSH IMAGE TO A CONTAINER REGISTRY (ACR , DOCKER)
+ACR EXAMPLE
+az acr login --name myRegistry
+docker tag myapp:abcd1234 myregistry.azurecr.io/myapp:abcd1234
+docker push myregistry.azurecr.io/myapp:abcd1234
+
+UPDATE DEPLOYMENT WITH NEW IMAGE TAG
+az webapp config container set --name myWebApp --resource-group myResourceGroup \
+  --docker-custom-image-name myregistry.azurecr.io/myapp:abcd1234
+  
+  SWAP THE STAGING SLOT INTO PRODUCTION
+  az webapp deployment slot swap --name myWebApp --resource-group myResourceGroup \
+    --slot staging --target-slot production
+
+
+
