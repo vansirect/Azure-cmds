@@ -1,0 +1,13 @@
+Find outbound IPs
+az webapp show \
+    --resource-group <group_name> \
+    --name <app_name> \ 
+    --query outboundIpAddresses \
+    --output tsv
+
+Find all outbound IPs regardless of pricing tier
+az webapp show \
+    --resource-group <group_name> \ 
+    --name <app_name> \ 
+    --query possibleOutboundIpAddresses \
+    --output tsv
