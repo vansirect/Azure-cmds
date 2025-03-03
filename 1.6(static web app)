@@ -1,0 +1,34 @@
+Create a static web app azure cloud
+
+1. DOWNLOAD THE APP
+Navigate to the app
+mkdir htmlapp
+cd htmlapp
+
+Clone the app to the html app directory
+git clone https://github.com/Azure-Samples/html-docs-hello-world.git
+
+Set variables to hold the resource group and app name
+resourceGroup=$(az group list --query "[].{id:name}" -o tsv)
+appName=az204app$RANDOM
+
+This should be the output
+{
+"app_url": "https://<myAppName>.azurewebsites.net",
+"location": "westeurope",
+"name": "<app_name>",
+"os": "Windows",
+"resourcegroup": "<resource_group_name>",
+"serverfarm": "appsvc_asp_Windows_westeurope",
+"sku": "FREE",
+"src_path": "/home/<username>/demoHTML/html-docs-hello-world ",
+< JSON data removed for brevity. >
+}
+
+Open app in browser using : https://<myAppName>.azurewebsites.net
+
+2. Update and redeploy the app 
+Navigate to index by inputting in the shell: code index.html
+
+Update and redeploy using
+az webapp up -g $resourceGroup -n $appName --html
