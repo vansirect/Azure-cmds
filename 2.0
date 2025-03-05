@@ -1,0 +1,13 @@
+Configure  web app settings
+
+Using azure CLI (bash)
+az webapp config appsettings set --resource-group <group-name> --name <app-name> --settings 
+key1=value1 key2=value2
+ //where key 1 and value 1 are your environment variables
+
+Using Azure powershell
+Set-AzWebApp -ResourceGroupName <group-name> -Name <app-name> -AppSettings @{"DB_HOST"="myownserver.mysql.database.azure.com"}
+// this sets db host and the environmental variable
+
+To confirm the changes visit
+https://<app-name>.scm.azurewebsites.net/Env
