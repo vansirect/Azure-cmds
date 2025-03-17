@@ -1,0 +1,12 @@
+Preview swap in slots
+https://<app_name>-<source-slot-name>.azurewebsites.net 
+
+
+Specify custom warm ups
+<system.webServer>
+    <applicationInitialization>
+        <add initializationPage="/" hostName="[app hostname]" />
+        <add initializationPage="/Home/About" hostName="[app hostname]" />
+    </applicationInitialization>
+</system.webServer>
+
