@@ -1,0 +1,71 @@
+Read the content of an HTTP  request in binary format
+{
+    "dataType": "binary",
+    "type": "httpTrigger",
+    "name": "req",
+    "direction": "in"
+}
+
+t
+{
+  "disabled": false,
+    "bindings": [
+        {
+            "type": "queueTrigger",
+            "direction": "in",
+            "name": "myQueueItem",
+            "queueName": "myqueue-items",
+            "connection":"MyStorageConnectionAppSetting"
+        },
+        {
+          "tableName": "Person",
+          "connection": "MyStorageConnectionAppSetting",
+          "name": "tableBinding",
+          "type": "table",
+          "direction": "out"
+        }
+  ]
+}
+Queue Trigger:
+
+type: queueTrigger indicates that this is a trigger for Azure Queue Storage.
+direction: in means the trigger is receiving data from Azure Queue Storage.
+name: myQueueItem is the function parameter that will receive the message content from the queue.
+queueName: myqueue-items is the name of the Azure Queue that the function will monitor for new messages.
+connection: "MyStorageConnectionAppSetting" is the connection string stored in the Azure Application settings to connect to the Azure Storage account.
+Table Output Binding:
+
+type: table indicates that this is an output binding for Azure Table Storage.
+direction: out means that data will be written to Table Storage.
+name: tableBinding is the function parameter name that will receive the data to write to the Table Storage.
+tableName: "Person" specifies the table name in Azure Table Storage where the new row will be inserted.
+connection: "MyStorageConnectionAppSetting" refers to the application setting that contains the connection string to Azure Storage.
+Workflow:
+When a new message is added to the myqueue-items queue, the Azure Function is triggered.
+The function retrieves the message content from the queue and writes a new row to the Person table in Azure Table Storage using the output binding.
+
+
+C# version 
+public static class QueueTriggerTableOutput
+{
+    [FunctionName("QueueTriggerTableOutput")]
+    [return: Table("outTable", Connection = "MY_TABLE_STORAGE_ACCT_APP_SETTING")]
+    public static Person Run(
+        [QueueTrigger("myqueue-items", Connection = "MY_STORAGE_ACCT_APP_SETTING")]JObject order,
+        ILogger log)
+    {
+        return new Person() {
+                PartitionKey = "Orders",
+                RowKey = Guid.NewGuid().ToString(),
+                Name = order["Name"].ToString(),
+                MobileNumber = order["MobileNumber"].ToString() };
+    }
+}
+
+public class Person
+{
+    public string PartitionKey { get; set; }
+    public string RowKey { get; set; }
+    public string Name { get; set; }
+    public string MobileNumber { get; set; }
+}
