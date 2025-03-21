@@ -1,0 +1,38 @@
+Changing and Adding lifecycle policies 
+1.Azure portal Code view 
+In the azure portal navigate to the storage account
+Under Data management select lifecycle management to view or change lifecycle management policies
+Select the Code view tab on this sab you can define a lifecycle management policy in json
+{
+  "rules": [
+    {
+      "enabled": true,
+      "name": "move-to-cool",
+      "type": "Lifecycle",
+      "definition": {
+        "actions": {
+          "baseBlob": {
+            "tierToCool": {
+              "daysAfterModificationGreaterThan": 30
+            }
+          }
+        },
+        "filters": {
+          "blobTypes": [
+            "blockBlob"
+          ],
+          "prefixMatch": [
+            "sample-container/log"
+          ]
+        }
+      }
+    }
+  ]
+}
+
+Azure CLI
+Create a Json file called policy.json and add it using Azure CLI
+az storage account management-policy create 
+--account-name <storage-account> 
+--policy @policy.json 
+--resource-group <resource-group>
