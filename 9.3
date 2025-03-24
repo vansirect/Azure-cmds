@@ -1,0 +1,74 @@
+Reeceive container properties
+
+To retrieve container properties, call one of the following methods of the BlobContainerClient class:
+GetProperties
+GetPropertiesAsync
+
+private static async Task ReadContainerPropertiesAsync(BlobContainerClient container)
+{
+    try
+    {
+        // Fetch some container properties and write out their values.
+        var properties = await container.GetPropertiesAsync();
+        Console.WriteLine($"Properties for container {container.Uri}");
+        Console.WriteLine($"Public access level: {properties.Value.PublicAccess}");
+        Console.WriteLine($"Last modified time in UTC: {properties.Value.LastModified}");
+    }
+    catch (RequestFailedException e)
+    {
+        Console.WriteLine($"HTTP error code {e.Status}: {e.ErrorCode}");
+        Console.WriteLine(e.Message);
+        Console.ReadLine();
+    }
+}
+Set and retrieve metadata
+You can specify metadata as one or more name-value pairs on a blob or container resource. To set metadata, add name-value pairs to an IDictionary object, and then call one of the following methods of the BlobContainerClient class to write the values:
+
+SetMetadata
+SetMetadataAsync
+
+SetMetadata on a container
+public static async Task AddContainerMetadataAsync(BlobContainerClient container)
+{
+    try
+    {
+        IDictionary<string, string> metadata =
+           new Dictionary<string, string>();
+
+        // Add some metadata to the container.
+        metadata.Add("docType", "textDocuments");
+        metadata.Add("category", "guidance");
+
+        // Set the container's metadata.
+        await container.SetMetadataAsync(metadata);
+    }
+    catch (RequestFailedException e)
+    {
+        Console.WriteLine($"HTTP error code {e.Status}: {e.ErrorCode}");
+        Console.WriteLine(e.Message);
+        Console.ReadLine();
+    }
+}
+
+Retrieve meta data from a container
+public static async Task ReadContainerMetadataAsync(BlobContainerClient container)
+{
+    try
+    {
+        var properties = await container.GetPropertiesAsync();
+
+        // Enumerate the container's metadata.
+        Console.WriteLine("Container metadata:");
+        foreach (var metadataItem in properties.Value.Metadata)
+        {
+            Console.WriteLine($"\tKey: {metadataItem.Key}");
+            Console.WriteLine($"\tValue: {metadataItem.Value}");
+        }
+    }
+    catch (RequestFailedException e)
+    {
+        Console.WriteLine($"HTTP error code {e.Status}: {e.ErrorCode}");
+        Console.WriteLine(e.Message);
+        Console.ReadLine();
+    }
+}
