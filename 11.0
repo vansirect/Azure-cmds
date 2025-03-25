@@ -1,0 +1,62 @@
+CosmosClient
+Creates a new CosmosClient with a connection string.
+CosmosClient client = new CosmosClient(endpoint, key);
+
+Create a database
+The CosmosClient.CreateDatabaseAsync method throws an exception if a database with the same name already exists.
+
+// New instance of Database class referencing the server-side database
+Database database1 = await client.CreateDatabaseAsync(
+    id: "adventureworks-1"
+);
+
+// New instance of Database class referencing the server-side database
+Database database2 = await client.CreateDatabaseIfNotExistsAsync(
+    id: "adventureworks-2"
+);
+
+Read a database by ID
+Reads a database from the Azure Cosmos DB service as an asynchronous operation.
+DatabaseResponse readResponse = await database.ReadAsync();
+
+Delete a database
+Delete a Database as an asynchronous operation.
+await database.DeleteAsync();Container examples
+
+Create a container
+The Database.CreateContainerIfNotExistsAsync method checks if a container exists, and if it doesn't, it creates it. Only the container id is used to verify if there's an existing container.
+// Set throughput to the minimum value of 400 RU/s
+ContainerResponse simpleContainer = await database.CreateContainerIfNotExistsAsync(
+    id: containerId,
+    partitionKeyPath: partitionKey,
+    throughput: 400);
+Get a container by ID
+Container container = database.GetContainer(containerId);
+ContainerProperties containerProperties = await container.ReadContainerAsync();
+
+Delete a container
+await database.GetContainer(containerId).DeleteContainerAsync();
+
+Create an item
+Use the Container.CreateItemAsync method to create an item. The method requires a JSON serializable object that must contain an id property, and a partitionKey.
+ItemResponse<SalesOrder> response = await container.CreateItemAsync(salesOrder, new PartitionKey(salesOrder.AccountNumber));
+
+Read an item
+Use the Container.ReadItemAsync method to read an item. The method requires type to serialize the item to along with an id property, and a partitionKey.
+string id = "[id]";
+string accountNumber = "[partition-key]";
+ItemResponse<SalesOrder> response = await container.ReadItemAsync(id, new PartitionKey(accountNumber));
+
+Query an item
+The Container.GetItemQueryIterator method creates a query for items under a container in an Azure Cosmos database using a SQL statement with parameterized values. It returns a FeedIterator.
+QueryDefinition query = new QueryDefinition(
+    "select * from sales s where s.AccountNumber = @AccountInput ")
+    .WithParameter("@AccountInput", "Account1");
+
+FeedIterator<SalesOrder> resultSet = container.GetItemQueryIterator<SalesOrder>(
+    query,
+    requestOptions: new QueryRequestOptions()
+    {
+        PartitionKey = new PartitionKey("Account1"),
+        MaxItemCount = 1
+    });
