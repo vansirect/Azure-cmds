@@ -1,0 +1,72 @@
+Mounting an Azure File Share in Azure Container Instances
+
+Stateless Containers: By default, Azure Container Instances (ACI) are stateless. To persist state, mount an external volume like an Azure File Share.
+
+Limitations
+- Azure File Share is only supported for Linux containers.
+- The Linux container must run as root.
+- CIFS support is limited.
+
+Example: Mount Azure File Share using Azure CLI
+bash
+az container create \
+    --resource-group $ACI_PERS_RESOURCE_GROUP \
+    --name hellofiles \
+    --image mcr.microsoft.com/azuredocs/aci-hellofiles \
+    --dns-name-label aci-demo \
+    --ports 80 \
+    --azure-file-volume-account-name $ACI_PERS_STORAGE_ACCOUNT_NAME \
+    --azure-file-volume-account-key $STORAGE_KEY \
+    --azure-file-volume-share-name $ACI_PERS_SHARE_NAME \
+    --azure-file-volume-mount-path /aci/logs/
+```
+
+#### YAML Example for Mounting an Azure File Share:
+```yaml
+apiVersion: '2019-12-01'
+location: eastus
+name: file-share-demo
+properties:
+  containers:
+  - name: hellofiles
+    properties:
+      image: mcr.microsoft.com/azuredocs/aci-hellofiles
+      ports:
+      - port: 80
+      volumeMounts:
+      - mountPath: /aci/logs/
+        name: filesharevolume
+  volumes:
+  - name: filesharevolume
+    azureFile:
+      sharename: acishare
+      storageAccountName: <Storage account name>
+      storageAccountKey: <Storage account key>
+```
+
+#### Mounting Multiple Volumes:
+To mount multiple volumes, define the volumes in the `volumes` section of a template and use the `volumeMounts` array in the container definition.
+
+Example:
+```json
+"volumes": [
+  {
+    "name": "myvolume1",
+    "azureFile": {
+      "shareName": "share1",
+      "storageAccountName": "myStorageAccount",
+      "storageAccountKey": "<storage-account-key>"
+    }
+  },
+  {
+    "name": "myvolume2",
+    "azureFile": {
+      "shareName": "share2",
+      "storageAccountName": "myStorageAccount",
+      "storageAccountKey": "<storage-account-key>"
+    }
+  }
+]
+```
+
+This will mount the two volumes in the specified paths within the containers.
